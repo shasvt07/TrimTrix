@@ -141,7 +141,6 @@ const ShopDetails = ({ navigation, route }) => {
 
     }
 
-
     const handlebookSeat = async (seatId) => {
         bookingDetail.current = ({ seatId: seatId, shopId: room, customerId: currentUser._id, services: selectedService.current, status: 'processing'})
         socket.emit('seat:underProcess', bookingDetail.current);
@@ -168,7 +167,7 @@ const ShopDetails = ({ navigation, route }) => {
         dispatch(bookSeat(bookingDetail.current));
 
         const data = await createBooking(bookingData.current);
-        console.log("booking reciept", data);
+        // console.log("booking reciept", data);
     }
 
     return (

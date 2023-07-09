@@ -2,7 +2,6 @@ const currentlobbyReducer = (state = {currentlobby:[]}, action) => {
     switch(action.type){
         
         case 'SET_LOBBY':
-            console.log(action.payload);
             return {...state, currentlobby: [...state.currentlobby, (!state.currentlobby.includes(action.payload) && action.payload)]};
         
         case 'JOB_DONE':

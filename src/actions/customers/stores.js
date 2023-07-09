@@ -38,7 +38,7 @@ export const processSeat = (bookingDetail) => async(dispatch) => {
 }
 
 export const bookSeat = (bookingDetail) => async(dispatch) => {
-    console.log(bookingDetail);
+    // console.log(bookingDetail);
     try{
         const {data} = await api.processSeat(bookingDetail);
             if(!data){

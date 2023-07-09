@@ -1,31 +1,47 @@
 import {
-  FlatList,
+  Dimensions,
+  // FlatList,
   Image,
   Pressable,
+  RefreshControl,
   SafeAreaView,
   StyleSheet,
-  Text,
+  // Text,
   Touchable,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import CustomerBooking from '../reusables/CustomerBooking';
 import { FlashList } from "@shopify/flash-list";
 import useFetchCustBookings from '../hooks/useFetchCustBookings';
 import { AuthContext } from '../../context/AuthContext';
+import { Box, Text, FlatList, Divider, Spinner } from 'native-base';
 
+const {height} = Dimensions.get('window');
 const Activity = () => {
     const {currentUser} = useContext(AuthContext);
+  const [refreshing, setRefreshing] = useState(true);
+
 //   
-  const { data, isLoading, isError } = useFetchCustBookings(currentUser._id);
+  const { data, isLoading, isError,hasNextPage,fetchNextPage, isFetchingNextPage } = useFetchCustBookings(currentUser._id);
   if (isLoading) return <Text>Loading...</Text>;
   if (isError) return <Text>An error occurred while fetching data</Text>
-  const flattenData = data.pages.flatMap((page) => page.data)
+  const flattenData = data?.pages.flatMap((page) => page.data)
+
+  const loadMore = () => {
+    if(hasNextPage){
+      fetchNextPage();
+    }
+    setRefreshing(false);
+  }
+
+  const renderSpinner = () => {
+    return <Spinner color='emerald.500' size='lg' />;
+  };
 
   return (
-    // <SafeAreaView>
     <View style={styles.conatiner}>
       <Text style={styles.headingtxt}> Activity</Text>
       <View
@@ -41,17 +57,31 @@ const Activity = () => {
           <Icon size={20} name="filter" />
         </TouchableOpacity>
       </View>
-
-
-    <FlatList
-        data={flattenData}
-        keyExtractor={(item) => item._id}
-        renderItem={({item,index}) => <CustomerBooking item={item} index={index}/>}
-        estimatedItemSize={100}
-      />
-
+    {isLoading ? (
+    <View
+      flex={1}
+      backgroundColor='white'
+      alignItems='center'
+      justifyContent='center'
+    >
+      <Spinner color='emerald.500' size='lg' />
     </View>
-    // </SafeAreaView>
+    ):(
+      <View style={{flex: 1 ,height:height}}>
+        <FlatList
+          data={flattenData}
+          // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadMore}/>}
+          keyExtractor={(item,index) => index.toString()}
+          renderItem={({item,index}) => <CustomerBooking item={item} index={index}/>}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={isFetchingNextPage || isLoading ? renderSpinner : null}
+
+        />
+      </View>
+    )}
+    
+    </View>
   );
 };
 
