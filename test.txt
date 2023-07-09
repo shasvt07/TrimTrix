@@ -1,0 +1,78 @@
+(firstFinishTime === null || firstFinishTime <= getFinishTime(seat.bookingTime,shop?.hair?.time,shop?.beard?.time,seat?.bookedServices)) &&
+                        (firstFinishTime.current = getFinishTime(seat.bookingTime,shop?.hair?.time,shop?.beard?.time,seat?.bookedServices),
+                        seatToDelete.current = seat._id
+                        )
+
+
+
+
+{/* <View style={styles.previous}></View> */}
+
+      {/* <FlatList
+        data={data}
+        keyExtractor={data.id}
+        renderItem={({item, index}) => (
+          <>
+              <TouchableOpacity style={styles.last}>
+                <Image
+                  style={styles.lastImage}
+                  source={require('../../assets/last.png')}
+                />
+                <View style={{marginLeft: 20, justifyContent: 'space-between'}}>
+                  <Text style={styles.cardHeading}>IIITL</Text>
+                  <Text style={styles.timeDate}>8Jun . 10:01 AM </Text>
+                  <Text style={styles.cost}>Rs. 174</Text>
+                  <TouchableOpacity style={styles.rebookbtn}>
+                    <Text style={{fontSize: 15}}>Rebook</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            <CustomerBooking item={item}/>
+          </>
+        )}
+      /> */}
+
+      const data = [
+//     {
+//       id: 1,
+//       dest: 'IIITL',
+//       date: '6 Jun. 10:13',
+//       charge: 'Rs.174',
+//     },
+//     {
+//       id: 2,
+//       dest: 'IIITL',
+//       date: '6 Jun. 10:13',
+//       charge: 'Rs.174',
+//     },
+//     {
+//       id: 3,
+//       dest: 'IIITL',
+//       date: '6 Jun. 10:13',
+//       charge: 'Rs.174',
+//     },
+//     {
+//       id: 4,
+//       dest: 'IIITL',
+//       date: '6 Jun. 10:13',
+//       charge: 'Rs.174',
+//     },
+//     {
+//       id: 5,
+//       dest: 'IIITL',
+//       date: '6 Jun. 10:13',
+//       charge: 'Rs.174',
+//     },
+//     {
+//       id: 6,
+//       dest: 'IIITL',
+//       date: '6 Jun. 10:13',
+//       charge: 'Rs.174',
+//     },
+//     {
+//       id: 7,
+//       dest: 'IIITL',
+//       date: '6 Jun. 10:13',
+//       charge: 'Rs.174',
+//     },
+//   ];
