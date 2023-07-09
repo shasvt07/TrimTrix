@@ -6,6 +6,8 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
     const[isOwner, setIsOwner] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
+    const [bookingDone, setBookingDone] = useState(false);
+
 
     const setisOwnerTrue = () => {
         setIsOwner(true);
@@ -43,19 +45,40 @@ export const AuthProvider = ({children}) => {
 
             var value = await AsyncStorage.getItem('isOwner').then(JSON.parse);
             setIsOwner(value);
+        // AsyncStorage.setItem('bookedSeat' , JSON.stringify(false));
+
         }
         catch(err){
             console.log("is LoggedIn error", err);
         }
     }   
+
+    const updateBookingDone = (data) => {
+        setBookingDone(data);
+        AsyncStorage.setItem('bookedSeat' , JSON.stringify(data));
+    }
+
+    const hasBookedSeat = async() => {
+        var value = await AsyncStorage.getItem('bookedSeat').then(JSON.parse);
+            setBookingDone(value);
+    }
     
     useEffect(() => {
         isLoggedIn();
-
+        hasBookedSeat();    
     },[])
 
     return (
-        <AuthContext.Provider value={{currentUser, setCurrentUser,login,logout, isLoggedIn,isOwner,setIsOwner,setIsOwnerFalse,setisOwnerTrue}}>
+        <AuthContext.Provider value={{currentUser,
+        setCurrentUser,
+        login,logout, 
+        isLoggedIn,isOwner,
+        setIsOwner,
+        setIsOwnerFalse,
+        setisOwnerTrue,
+        updateBookingDone,
+        bookingDone
+        }}>
             {children}
         </AuthContext.Provider>
     )

@@ -33,24 +33,6 @@ const ShopRegister = () => {
         lobby:[],
     }
     const shopData = useRef(initialStates);
-    // console.log(seats);
-
-
-    // useEffect(() => {
-    //     const backAction = () => {
-            
-    //     }
-    //     const backHandler = BackHandler.addEventListener(
-    //         'hardwareBackPress',
-    //         backAction,
-    //     );
-    //     return () => backHandler.remove();
-    // }, []);
-
-    // useEffect(() => {
-    //     shopData.current = myShop;
-    // },[myShop])
-
 
     const addSeats = async() =>{
         await dispatch({type:'ADD_SEAT', payload:{
@@ -68,14 +50,10 @@ const ShopRegister = () => {
     }
     
 
-    
-
     const handleSubmit = () => {
-        // console.log(seats);
         shopData.current = ({...shopData.current, lobby:seats,ownerName:currentUser.name});
         dispatch(createStore(currentUser._id,shopData.current));
-        // console.log(shopData.current);
-        // console.log(data);
+        
     }
 
     return (

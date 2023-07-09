@@ -6,7 +6,7 @@ import {
   RefreshControl,
   SafeAreaView,
   StyleSheet,
-  // Text,
+  Text,
   Touchable,
   TouchableOpacity,
   View,
@@ -17,7 +17,7 @@ import CustomerBooking from '../reusables/CustomerBooking';
 import { FlashList } from "@shopify/flash-list";
 import useFetchCustBookings from '../hooks/useFetchCustBookings';
 import { AuthContext } from '../../context/AuthContext';
-import { Box, Text, FlatList, Divider, Spinner } from 'native-base';
+import { Box, FlatList, Divider, Spinner } from 'native-base';
 
 const {height} = Dimensions.get('window');
 const Activity = () => {
@@ -26,8 +26,8 @@ const Activity = () => {
 
 //   
   const { data, isLoading, isError,hasNextPage,fetchNextPage, isFetchingNextPage } = useFetchCustBookings(currentUser._id);
-  if (isLoading) return <Text>Loading...</Text>;
-  if (isError) return <Text>An error occurred while fetching data</Text>
+  // if (isLoading) return <Text>Loading...</Text>;
+  // if (isError) return <Text>An error occurred while fetching data</Text>
   const flattenData = data?.pages.flatMap((page) => page.data)
 
   const loadMore = () => {
@@ -67,18 +67,16 @@ const Activity = () => {
       <Spinner color='emerald.500' size='lg' />
     </View>
     ):(
-      <View style={{flex: 1 ,height:height}}>
         <FlatList
           data={flattenData}
-          // refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadMore}/>}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadMore}/>}
           keyExtractor={(item,index) => index.toString()}
           renderItem={({item,index}) => <CustomerBooking item={item} index={index}/>}
           onEndReached={loadMore}
-          onEndReachedThreshold={0.3}
-          ListFooterComponent={isFetchingNextPage || isLoading ? renderSpinner : null}
+          onEndReachedThreshold={1}
+          ListFooterComponent={isFetchingNextPage ? renderSpinner : null}
 
         />
-      </View>
     )}
     
     </View>

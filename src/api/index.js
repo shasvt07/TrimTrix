@@ -17,7 +17,9 @@ export const ownerLogin = (userData) => API.post("/owner/auth/login",userData);
 export const createStore = (ownerId,shopData) => API.post(`/owner/${ownerId}/createStore`,shopData);
 export const fetchStore = (ownerId) => API.get(`/owner/${ownerId}/store`);
 export const updateStore = (ownerId,shopData) => API.patch(`/owner/${ownerId}/store/update`,shopData);
-export const fetchCustomer = (customerId) => API.get(`/owner/store/customer/${customerId}`); 
+export const fetchCustomer = (customerId) => API.get(`/owner/store/customer/${customerId}`);
+export const openCloseStore = (storeId,openClose) => API.patch(`/owner/store/${storeId}/${openClose}`); 
+
 
 
 
@@ -25,6 +27,6 @@ export const createBooking = (bookingData) => API.post(`/bookings/create`,bookin
 export const getBooking = (bookingId) => API.get(`/bookings/${bookingId}`);
 export const getOwnerBookings = (ownerId) => API.get(`/bookings/owner/${ownerId}`);
 export const getCustomerBookings = (customerId) => API.get(`/bookings/customer/${customerId}`);
-
+export const getCurrentLobby = (ownerId,size) => API.get(`/bookings/owner/${ownerId}/currentLobby`); 
 
 

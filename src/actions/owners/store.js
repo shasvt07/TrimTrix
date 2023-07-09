@@ -25,7 +25,6 @@ export const fetchStore = (ownerId) => async(dispatch) =>{
 export const updateStore = async(ownerId,shopData)  => {
     try{
         const {data} = await api.updateStore(ownerId,shopData);
-        // console.log("updatestore",data);
         return data;
     }
     catch(err){
@@ -33,10 +32,26 @@ export const updateStore = async(ownerId,shopData)  => {
     }
 }
 
-export const fetchCustomer = (customerId) => async(dispatch) =>{
+export const openClose = (storeId,openCloseinfo)  => async(dispatch) => {
     try{
-    const {data} = await api.fetchCustomer(customerId);
-        dispatch({type:'SET_LOBBY', payload:data});
+        const {data} = await api.openCloseStore(storeId,openCloseinfo);
+        dispatch({type:'OPEN_CLOSE',payload:openCloseinfo});
+        return data;
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+
+export const fetchCustomer = ({seatInfo,customerId}) => async(dispatch) =>{
+    console.log(seatInfo,customerId)
+    try{
+        const {data} = await api.fetchCustomer(customerId);
+        const reqdata = {...seatInfo};
+        reqdata.customerName = data.name;
+        reqdata.phoneNumber = data.phoneNumber
+        // console.log(reqdata);
+        dispatch({type:'SET_LOBBY', payload:reqdata});
     // console.log(data);
     return data;
     }catch(err){

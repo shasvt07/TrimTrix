@@ -26,6 +26,7 @@ const Home = ({navigation}) => {
   const dispatch = useDispatch();
   const [allstores,setAllStores] = useState([]);
   const [refreshing, setRefreshing] = useState(true);
+  const [bookingDone, setBookingDone] = useState(false);
 
 
   async function fetch(){
@@ -72,7 +73,7 @@ const renderStores = ({item,index}) => {
 
   return (
     // <ScrollView style={{backgroundColor:'#FFFFFF'}}>
-      <View style={{backgroundColor:'#FFFFFF'}}> 
+      <View style={{flex:1 ,backgroundColor:'#FFFFFF'}}> 
         <RefreshControl refreshing={refreshing} onRefresh={fetch} />
 
         <SearchBar />
@@ -100,10 +101,6 @@ const renderStores = ({item,index}) => {
               <Text style={styles.icontxt}>Wallet</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.itemBtn}>
-              <Icon size={20} style={styles.icon} name="wallet" />
-              <Text style={styles.icontxt}>Wallet</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.itemBtn}>
               <Icon
                 size={20}
                 style={styles.icon}
@@ -123,9 +120,9 @@ const renderStores = ({item,index}) => {
               padding: 20,
             }}>
             {/* <Carousel
-              ref={c => {
-                this._carousel = c;
-              }}
+              // ref={c => {
+              //   this._carousel = c;
+              // }}
               data={sliderData}
               renderItem={renderBanner}
               sliderWidth={windowWidth-20}
@@ -163,11 +160,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 5,
     margin: (10, 10),
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
   },
   itemBtn: {
     height: 80,
-    width: '20%',
+    width: 100,
     backgroundColor: '#ecf0f1',
     borderRadius: 10,
     alignItems: 'center',

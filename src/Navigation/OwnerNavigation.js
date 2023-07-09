@@ -15,6 +15,7 @@ import { AuthContext } from '../context/AuthContext'
 import MyStore from '../components/screens/ShopOwner/MyStore'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import ShopUpdate from '../components/screens/ShopOwner/ShopUpdate'
+import OwnerActivity from '../components/screens/ShopOwner/OwnerActivity'
 
 
 
@@ -55,7 +56,7 @@ const OwnerNavigation = () => {
             )}
         }/>
          */}
-        <Tab.Screen name = 'Activity' component={Activity} options={{
+        <Tab.Screen name = 'Activity' component={OwnerActivity} options={{
             tabBarIcon:({color, size}) => (
                 <Feather name='activity' color={color} size={size}/>
             )}

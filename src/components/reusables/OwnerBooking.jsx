@@ -3,27 +3,9 @@ import React from 'react';
 
 import { calculateTime } from './timeCalculation';
 
-const CustomerBooking = ({item,index}) => {
+const OwnerBooking = ({item,index}) => {
   return (
     <>
-    {index == 0 ?
-      <TouchableOpacity style={styles.last}>
-      <Image style={styles.lastImage} source={require('../../assets/last.png')}/>
-      <View style={{marginLeft:20, justifyContent:'space-between'}}>
-          <Text style={styles.cardHeading}>{item.shopName}</Text>
-          {/* <Text style={styles.cardHeading}>{item.phoneNumber}</Text> */}
-          <View style={{flexDirection:'row'}}>
-            <Text style={styles.timeDate}>{calculateTime(item.bookingTime)} - </Text>
-            <Text style={{}}>{calculateTime(item.completionTime)}</Text>
-          </View>
-          <Text style={styles.cost}>{item.services}</Text>
-          <Text style={styles.cost}>Rs.{item.cost}</Text>
-          <TouchableOpacity style={styles.rebookbtn}>
-              <Text style={{fontSize:15}}>Rebook</Text>
-          </TouchableOpacity>
-      </View>
-      </TouchableOpacity>
-      :
     <TouchableOpacity>
       <View style={styles.previous}>
         <View
@@ -41,12 +23,12 @@ const CustomerBooking = ({item,index}) => {
           </Text>
           <View style={{flexDirection:'row'}}>
           <Text style={styles.timeDate}>{calculateTime(item.bookingTime)} - </Text>
-          <Text style={{}}>{calculateTime(item.completionTime)}</Text>
+          <Text style={styles.timeDate}>{calculateTime(item.completionTime)}</Text>
           </View>
           <Text style={styles.cost}>Rs.{item.cost}</Text>
         </View>
         <TouchableOpacity style={styles.rebookbtn}>
-          <Text style={{fontSize: 15}}>Rebook</Text>
+          <Text style={{fontSize: 15}}>Details</Text>
         </TouchableOpacity>
       </View>
       <View
@@ -57,12 +39,12 @@ const CustomerBooking = ({item,index}) => {
           marginBottom: 10,
         }}></View>
     </TouchableOpacity>
-      }
+
       </>
   );
 };
 
-export default CustomerBooking;
+export default OwnerBooking;
 
 const styles = StyleSheet.create({
   conatiner: {
@@ -90,7 +72,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   last: {
-    height: 350,
+    height: 340,
     margin: 14,
     borderWidth: 2,
     borderRadius: 10,

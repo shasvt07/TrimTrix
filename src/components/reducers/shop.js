@@ -13,7 +13,9 @@ const shopReducer = (state = {shop:null}, action) => {
                         bookedServices : seatInfo.services,
                         status : seatInfo.status,
                         bookingTime : null,
-                        cost:0
+                        cost:0,
+                        personName:seatInfo.name,
+                        personNumber:seatInfo.phoneNumber
                     }
                 }
                 return seat;
@@ -26,11 +28,13 @@ const shopReducer = (state = {shop:null}, action) => {
             const newlobby1 = state.shop.lobby?.map(seat =>{
                 if(seat._id === seatInfo1.seatId){
                     return {...seat, 
-                        personId:seatInfo1.customerId,
+                        personId:seatInfo1.personId,
                         bookedServices : seatInfo1.services,
                         status : seatInfo1.status,
                         bookingTime : seatInfo1.bookingTime,
-                        cost:seatInfo1.cost
+                        cost:seatInfo1.cost,
+                        personName:seatInfo1.personName,
+                        personNumber:seatInfo1.phoneNumber
                     }
                 }
                 return seat;
@@ -46,14 +50,17 @@ const shopReducer = (state = {shop:null}, action) => {
                         bookedServices : null,
                         status : "free",
                         bookingTime : null,
-                        cost:0
+                        cost:0,
+                        personName:"",
+                        personNumber:""
                     }
                 }
             return seat;
         })
-
         return {...state , shop:{...state.shop, lobby:updatedlobby}}
 
+        case "OPEN_CLOSE":
+            return {...state, shop:{...state.shop, isOpen:action.payload}}
         
         default:
             return state;

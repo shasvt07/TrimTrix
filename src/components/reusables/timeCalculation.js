@@ -63,6 +63,16 @@ export function getFinishTime(timeString,hair,beard,services){
 
   return updatedISOString;
   }
+
+  export function getMinuteDifference(isoString1, isoString2) {
+    const date1 = new Date(isoString1);
+    const date2 = new Date(isoString2);
+    const differenceInMilliseconds = (date2 - date1);
+    const differenceInMinutes = Math.floor(differenceInMilliseconds / (1000 * 60));
+    return differenceInMinutes;
+  }
+  
+  console.log()
   
   
   
