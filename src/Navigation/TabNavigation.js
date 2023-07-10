@@ -12,6 +12,7 @@ import Account from '../components/screens/Account';
 import { AuthContext } from '../context/AuthContext'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import ShopDetails from '../components/screens/ShopDetails'
+import SearchRecommendations from '../components/reusables/SearchRecomendation'
 
 
 
@@ -27,8 +28,9 @@ const TabNavigation = () => {
             <Stack.Navigator screenOptions={{
                 headerShown:false}}
             >
-                <Stack.Screen name="home2" component={Home}/>
-                <Stack.Screen name="shopDetails" component={ShopDetails} />
+                <Stack.Screen  name="home2" component={Home}/>
+                <Stack.Screen  name="shopDetails" component={ShopDetails} />
+                <Stack.Screen  name="search" component={SearchRecommendations} />
             </Stack.Navigator>
         )
     }

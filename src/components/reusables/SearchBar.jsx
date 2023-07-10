@@ -9,6 +9,7 @@ const SearchBar = () => {
         <TextInput style={styles.txtinput} 
         placeholder='Shop Name?'
         />
+        <Text>Shop Name?</Text>
         <TouchableOpacity style={styles.btn}>
             <Icon name="map-pin" size={20} />
             <Text style={styles.btnTxt}>Near Me</Text>
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
         display:'flex',
         flexDirection:'row',
         alignItems:'center',
-        backgroundColor:'#dfe6e9',
+        backgroundColor:'#ecf0f1',
         justifyContent:'space-evenly',
         borderRadius:10
     },
