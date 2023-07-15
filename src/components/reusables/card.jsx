@@ -55,7 +55,7 @@ const Card = ({navigation, shop, currentRef}) => {
         </View>
         <TouchableOpacity
           style={[
-            tw`p-3 w-32 my-2 items-center rounded-full`,
+            tw`p-3 w-36 items-center rounded-full`,
             {backgroundColor: '#ddffab'},
           ]}
           onPress={() => {
