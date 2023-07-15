@@ -1,0 +1,1 @@
+import RazorpayCheckout from 'react-native-razorpay';

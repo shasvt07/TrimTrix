@@ -13,6 +13,8 @@ import { AuthContext } from '../context/AuthContext'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import ShopDetails from '../components/screens/ShopDetails'
 import SearchRecommendations from '../components/reusables/SearchRecomendation'
+import Map from '../components/reusables/MapView'
+import GetDirection from '../components/reusables/GetDirection'
 
 
 
@@ -31,10 +33,24 @@ const TabNavigation = () => {
                 <Stack.Screen  name="home2" component={Home}/>
                 <Stack.Screen  name="shopDetails" component={ShopDetails} />
                 <Stack.Screen  name="search" component={SearchRecommendations} />
+                <Stack.Screen  name="map" component={Map} />
+                <Stack.Screen  name="getDirection" component={GetDirection} />
+
             </Stack.Navigator>
         )
     }
     
+    const ActivityNavigation = () => {
+        return(
+            <Stack.Navigator screenOptions={{
+                headerShown:false}}
+            >
+                <Stack.Screen  name="activity" component={Activity}/>
+                <Stack.Screen  name="shopDetails" component={ShopDetails} />
+
+            </Stack.Navigator>
+        )
+    }
   return (
     
     <Tab.Navigator screenOptions={{
@@ -54,7 +70,7 @@ const TabNavigation = () => {
             )}
         }/> */}
         
-        <Tab.Screen name = 'Activity' component={Activity} options={{
+        <Tab.Screen name = 'Activity' component={ActivityNavigation} options={{
             tabBarIcon:({color, size}) => (
                 <Feather name='activity' color={color} size={size}/>
             )}

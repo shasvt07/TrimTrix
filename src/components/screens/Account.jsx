@@ -4,6 +4,8 @@ import Icon  from 'react-native-vector-icons/FontAwesome5'
 import Entypo from 'react-native-vector-icons/Entypo'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Feather from 'react-native-vector-icons/Feather'
+import AntDesign from 'react-native-vector-icons/AntDesign'
+
 import MaterialCommunityIcons  from 'react-native-vector-icons/MaterialCommunityIcons'
 import { AuthContext } from '../../context/AuthContext'
 import { useDispatch } from 'react-redux'
@@ -24,7 +26,8 @@ const Account = () => {
                         <Text style={{color:'#000000'}}>4.67</Text>
                     </View>
                 </View>
-                <Image style={styles.accImg} source={require('../../assets/logo.png')}/>
+          <Image style={styles.accImg} source={require('../../assets/person.png')}/>
+
             </View>
 
             <View style={styles.items}>
@@ -61,7 +64,7 @@ const Account = () => {
                 <Text style={styles.optiontxt}>Legal</Text>
             </Pressable>
             <Pressable style={styles.optionitem} onPress={logout}>
-                <Icon  name="info-circle" style={styles.icon} size={15}/>
+                <AntDesign name="logout" style={styles.icon} size={15}/>
                 <Text style={styles.optiontxt}>SignOut</Text>
             </Pressable>
 
@@ -100,9 +103,11 @@ const styles = StyleSheet.create({
         
     },
     accImg:{
-        // flex:1,
-        // height:100,
-        // width:100,
+        flex:1/2,
+        height:100,
+        width:50,
+
+        backgroundColor:'transparent',
     },
     rating:{
          flexDirection:'row',

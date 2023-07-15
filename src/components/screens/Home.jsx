@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
@@ -9,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import SearchBar from '../reusables/SearchBar';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Carousel} from 'react-native-snap-carousel';
@@ -17,27 +17,32 @@ import {sliderData} from '../constants/data';
 import BannerSlider from '../reusables/BannerSlider';
 import {windowWidth} from '../../utils/Dimension';
 import {fetchShop, fetchStores} from '../../actions/customers/stores';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import StoreList from '../reusables/StoreLists';
+import MapView from 'react-native-maps';
+import Map from '../reusables/MapView';
+
+
 
 // import Carousel, { Pagination } from 'react-native-snap-carousel'
 // const [index, setIndex] = React.useState(0)
 
 const Home = ({navigation}) => {
   const dispatch = useDispatch();
-  const [allstores, setAllStores] = useState([]);
+  const {shopList,isLoading} = useSelector((state) => state.shopList);
   const [refreshing, setRefreshing] = useState(true);
   const [bookingDone, setBookingDone] = useState(false);
 
   async function fetch() {
-    const data = await fetchStores();
-    setAllStores(data);
+    await dispatch(fetchStores());
     setRefreshing(false);
   }
 
   useEffect(() => {
     fetch();
-  }, [navigation]);
+  }, [dispatch]);
+
+  
 
 
   const renderBanner = ({item, index}) => {
@@ -50,21 +55,30 @@ const Home = ({navigation}) => {
       <TouchableOpacity style={styles.searchcontainer} onPress={() => navigation.navigate('search')}>
         <Icon name="search" size={20} />
         <Text style={styles.searchtxtinput}>Shop Name?</Text>
-        <TouchableOpacity style={styles.searchbtn}>
+        <TouchableOpacity style={styles.searchbtn} onPress={() => navigation.navigate('map', params={shopList:shopList})}>
           <Icon name="map-pin" size={20} />
           <Text style={styles.searchbtnTxt}>Near Me</Text>
         </TouchableOpacity>
       </TouchableOpacity>
 
       <View style={{width: '100%'}}>
+        {isLoading ? <View
+        // flex={1}
+        backgroundColor='white'
+        alignItems='center'
+        justifyContent='center'
+      >
+        <ActivityIndicator size="small" />
+      </View> :
         <FlatList
-          data={allstores.slice(0,2)}
+          data={shopList?.slice(0,2)}
           keyExtractor={item => item._id}
           renderItem={({item,index}) => <StoreList navigation={navigation} item={item} index={index}/>}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={fetch} />
           }
         />
+    }
       </View>
       <View>
         <Text style={styles.subHeading}>Suggestions</Text>
@@ -92,13 +106,13 @@ const Home = ({navigation}) => {
       </View>
       <View>
         <Text style={styles.subHeading}>Ways to save money</Text>
-        <View
+        {/* <View
           style={{
             alignItems: 'center',
             justifyContent: 'center',
             padding: 20,
           }}>
-          {/* <Carousel
+          <Carousel
               // ref={c => {
               //   this._carousel = c;
               // }}
@@ -108,8 +122,18 @@ const Home = ({navigation}) => {
               itemWidth={300}
               loop={true}
               
-            /> */}
-        </View>
+            />
+        </View> */}
+        {/* <MapView
+          style={{height:'100%', width:'100%'}}
+          initialRegion={{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        /> */}
+        {/* <Map/> */}
       </View>
     </View>
     // </ScrollView>
@@ -168,7 +192,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     padding: 5,
-    margin: (10, 10),
+    margin: 10,
     justifyContent: 'space-evenly',
   },
   itemBtn: {

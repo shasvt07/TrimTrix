@@ -1,4 +1,4 @@
-import { baseFontSize } from 'native-base/lib/typescript/theme/v33x-theme/tools';
+
 import * as api from '../../api/index'
 
 export const createBooking = async(bookingData) => {

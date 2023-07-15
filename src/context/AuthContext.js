@@ -1,36 +1,43 @@
 import React,{createContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { io } from 'socket.io-client';
 
 export const AuthContext = createContext();
+
+const socket = io.connect('http://192.168.1.35:8000');
 
 export const AuthProvider = ({children}) => {
     const[isOwner, setIsOwner] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const [bookingDone, setBookingDone] = useState(false);
+    const [isLoading,setIsLoading] = useState(true);
 
 
-    const setisOwnerTrue = () => {
+    const setisOwnerTrue = async () => {
         setIsOwner(true);
-        AsyncStorage.setItem('isOwner' , JSON.stringify(true));
+        await AsyncStorage.setItem('isOwner' , JSON.stringify(true));
     }
-    const setIsOwnerFalse = () => {
+    const setIsOwnerFalse = async () => {
         setIsOwner(false);
-        AsyncStorage.setItem('isOwner' , JSON.stringify(false));
+        await AsyncStorage.setItem('isOwner' , JSON.stringify(false));
     }
-    const login = (user) => {
+    const login = async(user) => {
         try{
+            setIsLoading(true);
             setCurrentUser(user);
-            AsyncStorage.setItem('user' , JSON.stringify(user));
+            await AsyncStorage.setItem('user' , JSON.stringify(user));
+            setIsLoading(false);
+
             
         }catch(err){
             console.log("Login error", err);
         }
     }
-    const logout = () => {
+    const logout = async () => {
         try{
             setCurrentUser(null);
-            AsyncStorage.removeItem('user');
-            AsyncStorage.setItem('isOwner' , JSON.stringify(false));
+            await AsyncStorage.removeItem('user');
+            await AsyncStorage.setItem('isOwner' , JSON.stringify(false));
 
         }
         catch(err){
@@ -40,8 +47,13 @@ export const AuthProvider = ({children}) => {
 
     const isLoggedIn = async() => {
         try{
+
+            setIsLoading(true);
             var user = await AsyncStorage.getItem('user').then(JSON.parse);
+            // await AsyncStorage.removeItem('user');
+
             setCurrentUser(user);
+            setIsLoading(false);
 
             var value = await AsyncStorage.getItem('isOwner').then(JSON.parse);
             setIsOwner(value);
@@ -77,7 +89,9 @@ export const AuthProvider = ({children}) => {
         setIsOwnerFalse,
         setisOwnerTrue,
         updateBookingDone,
-        bookingDone
+        bookingDone,
+        isLoading,
+        socket
         }}>
             {children}
         </AuthContext.Provider>

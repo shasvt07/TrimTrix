@@ -4,7 +4,7 @@ export const createStore = (ownerId,shopData) => async(dispatch) => {
     try{
         const {data} = await api.createStore(ownerId,shopData);
         dispatch({type:"FETCH_STORE", payload:data});
-        return data;
+        // return data;
     }
     catch(err){
         console.log(err);
@@ -36,6 +36,7 @@ export const openClose = (storeId,openCloseinfo)  => async(dispatch) => {
     try{
         const {data} = await api.openCloseStore(storeId,openCloseinfo);
         dispatch({type:'OPEN_CLOSE',payload:openCloseinfo});
+        // dispatch({type:"SHOP_STATUS", payload:{shopId:storeId,openClose:openCloseinfo}});
         return data;
     }
     catch(err){

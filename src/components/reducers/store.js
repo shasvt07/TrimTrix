@@ -4,6 +4,7 @@ import seatsReducer from './seats';
 import myShopReducer from './myShopReducer';
 import shopReducer from './shop';
 import currentlobbyReducer from './currentlobby';
+import shopListReducer from './shopList';
 
 
 const rootReducer = combineReducers({
@@ -11,7 +12,8 @@ const rootReducer = combineReducers({
   seats:seatsReducer,
   myShop:myShopReducer,
   shop:shopReducer,
-  currentlobby:currentlobbyReducer
+  currentlobby:currentlobbyReducer,
+  shopList:shopListReducer
 
 })
 

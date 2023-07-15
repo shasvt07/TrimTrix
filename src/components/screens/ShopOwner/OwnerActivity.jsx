@@ -1,6 +1,7 @@
 import {
+  ActivityIndicator,
     Dimensions,
-    // FlatList,
+    FlatList,
     Image,
     Pressable,
     RefreshControl,
@@ -16,7 +17,6 @@ import {
   import { FlashList } from "@shopify/flash-list";
 //   import useFetchCustBookings from '../hooks/useFetchCustBookings';
 //   import { AuthContext } from '../../context/AuthContext';
-  import { Box, FlatList, Divider, Spinner } from 'native-base';
 import OwnerBooking from '../../reusables/OwnerBooking';
 import useFetchOwnBookings from '../../hooks/useFetchOwnBookings';
 import { AuthContext } from '../../../context/AuthContext';
@@ -24,7 +24,7 @@ import { AuthContext } from '../../../context/AuthContext';
   const {height} = Dimensions.get('window');
   const OwnerActivity = () => {
       const {currentUser} = useContext(AuthContext);
-    const [refreshing, setRefreshing] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
   
   //   
     const { data, isLoading, isError,hasNextPage,fetchNextPage, isFetchingNextPage } = useFetchOwnBookings(currentUser._id);
@@ -35,15 +35,11 @@ import { AuthContext } from '../../../context/AuthContext';
     const loadMore = () => {
 
       if(hasNextPage){
-        console.log(hasNextPage);
         fetchNextPage();
       }
       setRefreshing(false);
     }
   
-    const renderSpinner = () => {
-      return <Spinner color='emerald.500' size='lg' />;
-    };
   
     return (
       <View style={styles.conatiner}>
@@ -68,7 +64,7 @@ import { AuthContext } from '../../../context/AuthContext';
         alignItems='center'
         justifyContent='center'
       >
-        <Spinner color='emerald.500' size='lg' />
+        <ActivityIndicator size='large' />
       </View>
       ):(
         <View style={{flex: 1 ,height:height}}>
@@ -79,7 +75,7 @@ import { AuthContext } from '../../../context/AuthContext';
             renderItem={({item,index}) => <OwnerBooking item={item} index={index}/>}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
-            ListFooterComponent={isFetchingNextPage ? renderSpinner : null}
+            ListFooterComponent={isFetchingNextPage ? <ActivityIndicator/> : null}
   
           />
          </View>

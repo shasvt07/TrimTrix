@@ -1,6 +1,6 @@
 import {
   Dimensions,
-  // FlatList,
+  FlatList,
   Image,
   Pressable,
   RefreshControl,
@@ -9,6 +9,7 @@ import {
   Text,
   Touchable,
   TouchableOpacity,
+  ActivityIndicator,
   View,
 } from 'react-native';
 import React, { useContext, useState } from 'react';
@@ -17,12 +18,12 @@ import CustomerBooking from '../reusables/CustomerBooking';
 import { FlashList } from "@shopify/flash-list";
 import useFetchCustBookings from '../hooks/useFetchCustBookings';
 import { AuthContext } from '../../context/AuthContext';
-import { Box, FlatList, Divider, Spinner } from 'native-base';
+
 
 const {height} = Dimensions.get('window');
-const Activity = () => {
+const Activity = ({navigation}) => {
     const {currentUser} = useContext(AuthContext);
-  const [refreshing, setRefreshing] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
 //   
   const { data, isLoading, isError,hasNextPage,fetchNextPage, isFetchingNextPage } = useFetchCustBookings(currentUser._id);
@@ -38,7 +39,7 @@ const Activity = () => {
   }
 
   const renderSpinner = () => {
-    return <Spinner color='emerald.500' size='lg' />;
+    return <ActivityIndicator size="large" />
   };
 
   return (
@@ -64,14 +65,14 @@ const Activity = () => {
       alignItems='center'
       justifyContent='center'
     >
-      <Spinner color='emerald.500' size='lg' />
+      <ActivityIndicator size="small" />
     </View>
     ):(
         <FlatList
           data={flattenData}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={loadMore}/>}
           keyExtractor={(item,index) => index.toString()}
-          renderItem={({item,index}) => <CustomerBooking item={item} index={index}/>}
+          renderItem={({item,index}) => <CustomerBooking navigation={navigation} item={item} index={index}/>}
           onEndReached={loadMore}
           onEndReachedThreshold={1}
           ListFooterComponent={isFetchingNextPage ? renderSpinner : null}
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   last: {
-    height: 340,
+    height: 350,
     margin: 14,
     borderWidth: 2,
     borderRadius: 10,

@@ -11,10 +11,15 @@ import {
   } from 'react-native';
 import {useDispatch} from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { fetchShop } from '../../actions/customers/stores';
 
 
 const StoreList = ({navigation, item, index}) => {
   const dispatch = useDispatch();
+
+  const getShopDetails = async (shopId) => {
+    await dispatch(fetchShop(shopId));
+  }
 
   return (
           <Pressable
@@ -27,7 +32,7 @@ const StoreList = ({navigation, item, index}) => {
               width: '100%',
             }}
             onPress={() => {
-              dispatch({type:"STORE_DETAILS", payload:item});
+              getShopDetails(item._id);
               navigation.navigate('shopDetails', (params = {room: item._id}));
             }}>
             <View style={styles.pinicon}>
@@ -42,7 +47,7 @@ const StoreList = ({navigation, item, index}) => {
                 }}>
                 <View style={{marginLeft:10}}>
                   <Text style={{fontSize: 20, color: '#000000'}}>{item.name}</Text>
-                  <Text numberOfLines={1} style={{fontSize: 15, overflow:'hidden'}}>{item.location}</Text>
+                  <Text numberOfLines={1} style={{fontSize: 15, overflow:'hidden'}}>{item.location.address}</Text>
                 </View>
                 <Entypo name="chevron-small-right" size={24} color="black" />
               </View>

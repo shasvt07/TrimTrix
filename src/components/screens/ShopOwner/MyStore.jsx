@@ -19,11 +19,11 @@ import {calculateTime, getFinishTime} from '../../reusables/timeCalculation';
 import {fetchShop} from '../../../actions/customers/stores';
 import CurrentLobbyDetail from './CurrentLobbyDetail';
 import {Pressable} from 'react-native';
+import { windowWidth } from '../../../utils/Dimension';
 
-const socket = io.connect('http://192.168.1.35:8000');
 
 const MyStore = ({navigation}) => {
-  const {currentUser} = useContext(AuthContext);
+  const {currentUser,socket} = useContext(AuthContext);
   const {myShop} = useSelector(state => state.myShop);
   const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(true);
@@ -106,7 +106,6 @@ const MyStore = ({navigation}) => {
                 onPress={() =>
                   navigation.navigate(
                     'updateStore',
-                    (params = {socket: socket}),
                   )
                 }>
                 <Feather name="edit" size={24} />
@@ -223,22 +222,6 @@ const styles = StyleSheet.create({
     height: 1,
     width: '100%',
   },
-  // uppercontainer:{
-  //     alignItems: 'center',
-  //     backgroundColor: '#FFFFFF',
-  //     transform : [ { scaleX : 2 } ],
-  //     borderBottomStartRadius : 200,
-  //     borderBottomEndRadius : 200,
-  //     overflow : 'hidden',
-  // },
-  // lowercontainer:{
-  //     backgroundColor:'#0000000',
-  //     flex : 1,
-  //     transform : [ { scaleX : 0.5 } ],
-  //     backgroundColor : 'yellow',
-  //     alignItems : 'center',
-  //     justifyContent : 'center'
-  // },
   heading: {
     fontSize: 25,
     color: '#000000',
@@ -254,12 +237,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    width: '95%',
+    width: windowWidth-20,
     flexWrap: 'wrap',
     marginBottom: 20,
     borderWidth: 1,
     borderRadius: 20,
-    borderColor: 'grey',
+    borderColor: 'lightgray',
   },
   occupied: {
     width: 50,
@@ -278,7 +261,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#38CC77',
-    margin: 12,
+    margin: 13,
     marginTop: 5,
     marginBottom: 5,
   },

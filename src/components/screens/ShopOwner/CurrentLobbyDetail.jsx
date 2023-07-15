@@ -1,15 +1,18 @@
 import { FlatList, Image, Pressable, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchCustomer } from '../../../actions/owners/store'
 import { calculateTime } from '../../reusables/timeCalculation'
 import { windowWidth } from '../../../utils/Dimension'
+import tw from 'tailwind-react-native-classnames'
+import { AuthContext } from '../../../context/AuthContext'
 
 const CurrentLobbyDetail = () => {
 
     const {shop} = useSelector((state) => state.shop);
     // const dispatch = useDispatch();
+    const {currentUser} = useContext(AuthContext);
 
 
   return (
@@ -18,10 +21,10 @@ const CurrentLobbyDetail = () => {
                 item.status !== 'free' &&
                 (
                 <View key = {item._id}>
-                <TouchableOpacity>
+                <TouchableOpacity style={{backgroundColor:(item.personId === currentUser._id) && '#f6e58d', marginLeft: 10, marginRight:10, borderRadius:10, height:100}}>
                 <View style={styles.previous}>
                     <View style={{backgroundColor:'#dfe6e9', justifyContent:'cetner',alignItem:'center', borderRadius:10}}>
-                    <Image source={require('../../../assets/logo.png')}/>
+                    <Image style={tw`h-12 w-12`} source={require('../../../assets/person.png')}/>
                     </View>
                     <View style={styles.preItems}>
                         <Text style={{marginBottom:2, fontSize:20,color:'#000000'}}>{item.personName}</Text>

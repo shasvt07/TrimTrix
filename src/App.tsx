@@ -16,14 +16,12 @@ import {AuthProvider } from './context/AuthContext';
 import MainNav from './Navigation/MainNav';
 import { store } from './components/reducers/store';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { NativeBaseProvider } from 'native-base';
 
 
 function App(): JSX.Element {
   const queryClient = new QueryClient();
 
   return (
-    <NativeBaseProvider>
       <QueryClientProvider client={queryClient}>
       <AuthProvider>
       <Provider store={store}>
@@ -31,7 +29,6 @@ function App(): JSX.Element {
       </Provider>
       </AuthProvider>
       </QueryClientProvider>
-    </NativeBaseProvider>
 
   );
 }

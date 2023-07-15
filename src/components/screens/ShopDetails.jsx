@@ -1,6 +1,5 @@
-import { Alert, BackHandler, Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, BackHandler, Image, Pressable, ScrollView, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import CheckBox from 'react-native-check-box'
 import { io } from 'socket.io-client';
 import { calculateTime, addMinutesToTime, getFinishTime, getMinuteDifference } from '../reusables/timeCalculation'
 var cron = require('node-cron');
@@ -15,12 +14,16 @@ import { AuthContext } from '../../context/AuthContext.js';
 import { createBooking, getCurrentLobby } from '../../actions/bookings/bookings';
 import CurrentLobbyDetail from './ShopOwner/CurrentLobbyDetail';
 import { fetchCustomer } from '../../actions/owners/store';
+import tw from 'tailwind-react-native-classnames';
+import RazorpayCheckout from 'react-native-razorpay';
+import MapView,{Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import { windowWidth } from '../../utils/Dimension';
 
 
-const socket = io.connect('http://192.168.1.35:8000');
+
 const ShopDetails = ({ navigation, route }) => {
 
-    const { currentUser,bookingDone,updateBookingDone } = useContext(AuthContext)
+    const { currentUser,bookingDone,updateBookingDone ,socket} = useContext(AuthContext)
     const dispatch = useDispatch();
     const { shop } = useSelector((state) => state.shop);
     // const {serviceCost} = useSelector((state) => state.serviceCost);
@@ -35,8 +38,23 @@ const ShopDetails = ({ navigation, route }) => {
     const seatToDelete = useRef(null);
     const myBookingTime = useRef(currentTime);
     const myCompletionTime = useRef(currentTime);
+    const [isPressed, setIsPressed] = useState(false);
+    const paymentDetails = useRef({
+        paymentId:"",
+        // orderId: "",
+        // signature: ""
+    })
 
     const [currentTime, setCurrentTime] = useState('');
+    // const [region, setRegion] = useState({
+    //     latitudeDelta:0.0012,
+    //     longitudeDelta:0.0022,
+    //     latitude:shop?.location?.latitude || 26.7778153,
+    //     longitude:shop?.location?.longitude || 80.956942
+    
+    //   })
+
+      
     const bookingDetail = useRef({
         seatId:null, 
         shopId: room,
@@ -61,7 +79,6 @@ const ShopDetails = ({ navigation, route }) => {
         completionTime:null,
         cost:0
     })
-
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -115,6 +132,7 @@ const ShopDetails = ({ navigation, route }) => {
         socket.on('store:StatusDetail', (storeId,status) => {
             if(room === storeId){
                 dispatch({ type: "OPEN_CLOSE", payload:status});
+                // dispatch({type:"SHOP_STATUS", payload:{shopId:storeId,openClose:openCloseinfo}});
             }
         })
         socket.on('store:UpdatedDetails', (storeInfo) => {
@@ -142,18 +160,18 @@ const ShopDetails = ({ navigation, route }) => {
 
     const handleSelectOptions = () => {
         if (beardoption.current && hairoption.current) {
-            serviceCost.current = (shop.hair.cost + shop.beard.cost);
+            serviceCost.current = Math.ceil((shop.hair.cost + shop.beard.cost)*(30/100));
         }
         else if (beardoption.current && !hairoption.current) {
-            serviceCost.current = (shop.beard.cost);
+            serviceCost.current = Math.ceil((shop.beard.cost) *(30/100));
         }
         else if (hairoption.current && !beardoption.current) {
-            serviceCost.current = (shop.hair.cost);
+            serviceCost.current =  Math.ceil((shop.hair.cost) *(30/100));
         }
         else {
             serviceCost.current = 0;
         }
-        bookingData.current={...bookingData, cost:serviceCost.current}
+        bookingData.current={...bookingData.current, cost:serviceCost.current}
 
     }
 
@@ -161,21 +179,20 @@ const ShopDetails = ({ navigation, route }) => {
 
         if (beardoption.current && hairoption.current) {
             selectedService.current = "2";
-            bookingData.current={...bookingData, services:"hair Cutting, Beard Setting"}
+            bookingData.current={...bookingData.current, services:"hair Cutting, Beard Setting"}
         }
         else if (beardoption.current && !hairoption.current) {
             selectedService.current = "1";
-            bookingData.current={...bookingData, services:"Beard Setting"}
+            bookingData.current={...bookingData.current, services:"Beard Setting"}
 
         }
         else if (hairoption.current && !beardoption.current) {
             selectedService.current = "0";
-            bookingData.current={...bookingData, services:"hair Cutting"}
+            bookingData.current={...bookingData.current, services:"hair Cutting"}
         }
         else {
-            serviceCost.current = null
-            bookingData.current={...bookingData, services:''}
-
+            selectedService.current = null
+            bookingData.current={...bookingData.current, services:null}
         }
         bookingDetail.current = { ...bookingDetail.current, services: selectedService.current }
 
@@ -197,10 +214,42 @@ const ShopDetails = ({ navigation, route }) => {
             const details = bookingDetail.current;
             await dispatch(processSeat(details));
         }
-        
     }
 
-    const handleCompleteBooking = async() => {
+    const completePayment = async() => {
+        if(selectedService.current===null){
+            Alert.alert("Please select atleast one service");
+            return;
+        }
+        var options = {
+            description: 'Credits for booking seat',
+            image: {uri: require('../../assets/logo.png')},
+            currency: 'INR',
+            key: 'rzp_test_sETUxVcrt2L1p7',
+            amount: serviceCost.current*100,
+            name: 'TrimTrix',
+            order_id: '',//Replace this with an order_id created using Orders API.
+            prefill: {
+              email:currentUser.email,
+              contact:currentUser.phoneNumber,
+              name: currentUser.name,
+            },
+            theme: {color: '#528FF0'}
+          }
+          RazorpayCheckout.open(options).then((data) => {
+            // handle success
+            paymentDetails.current = {paymentId:data.razorpay_payment_id}
+            handleCompleteBooking(paymentDetails.current);
+            Alert.alert(`Your seat has been booked successfully`);
+
+          }).catch((error) => {
+            // handle failure
+            Alert.alert(`Error: ${error.code} | ${error.description}`);
+          });
+    }
+
+    const handleCompleteBooking = async(paymentInfo) => {
+        
         bookingDetail.current = {...bookingDetail.current,
             cost:serviceCost.current,
             bookedServices:selectedService.current, 
@@ -222,17 +271,21 @@ const ShopDetails = ({ navigation, route }) => {
             customerId:currentUser._id,
             location:shop.location,
             cost:serviceCost.current,
-            services:selectedService.current == '2'?"Hair Cutting, Beard Setting" :selectedService.current == '1'? "Beard Setting" : selectedService.current == '0' ? "Hair Cutting" : null
-
+            services:selectedService.current == '2'?"Hair Cutting, Beard Setting" :selectedService.current == '1'? "Beard Setting" : selectedService.current == '0' ? "Hair Cutting" : null,
+            paymentId:paymentInfo.paymentId,
+            // orderId:paymentInfo.orderId,
         }
         dispatch(bookSeat(bookingDetail.current));
         myBookingTime.current = bookingDetail.current.bookingTime;
         myCompletionTime.current = bookingData.current.completionTime;
-        console.log(currentTime,myBookingTime.current,myCompletionTime.current);
-
+        console.log(myBookingTime);
+        
         const data = await createBooking(bookingData.current);
         if(data!== null || data!==undefined){
             updateBookingDone(true);
+        }
+        else{
+            hanldeEmptySeat(bookingDetail.current.seatId);
         }
 
     }
@@ -251,14 +304,18 @@ const ShopDetails = ({ navigation, route }) => {
             },
         ])
     }
+    
 
     return (
         <ScrollView style={{flex:1,backgroundColor:'#FFFFFF'}}>
             <View style={styles.container}>
-                <Text style={styles.heading}> Shop Deatils</Text>
+                <Text style={styles.heading}> Shop Details</Text>
                 <View style={styles.partition}></View>
-                <TouchableOpacity style={styles.last}>
-                    <Image style={styles.lastImage} source={require('../../assets/last.png')} />
+                <View style={styles.last}>
+                    <Pressable onPress={()=>{navigation.navigate('getDirection', params={shop})}}>
+                        <Image style={styles.lastImage} source={require('../../assets/last.png')} />
+
+                    </Pressable>
                     <View style={{ marginLeft: 20, justifyContent: 'space-between' }}>
                         <Text style={styles.cardHeading}>{shop?.name}</Text>
                         <View style={{flexDirection: 'row',justifyContent:'space-between'}}>
@@ -294,7 +351,7 @@ const ShopDetails = ({ navigation, route }) => {
                   </View>
                 </View>
                     </View>
-                </TouchableOpacity>
+                </View>
                 {shop?.isOpen &&
                 <View style={{alignItems:'center'}}>
                     <Text style={styles.heading}> Select available seat </Text>
@@ -332,7 +389,19 @@ const ShopDetails = ({ navigation, route }) => {
                         <Text style={styles.heading}> Select your services </Text>
                         <View style={styles.services}>
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <CheckBox
+                            <TouchableHighlight
+                                style={[
+                                tw`p-4 mr-4 w-20 items-center my-2 rounded-full`,
+                                {backgroundColor: hairoption.current ? '#E07C24' : '#dfe6e9'},
+                                ]}
+                                onPress={() => {hairoption.current = (!hairoption.current), handleSelectOptions();
+                                    handleSelectService();}}
+                                underlayColor={hairoption.current ? '#E07C24' : '#E5E7EB'}>
+                                <Text style={tw`text-black font-semibold`}>
+                                Hair
+                                </Text>
+                            </TouchableHighlight>
+                                {/* <CheckBox
                                     style={{ padding: 10 }}
                                     onClick={() => {
                                         hairoption.current = (!hairoption.current);
@@ -340,27 +409,28 @@ const ShopDetails = ({ navigation, route }) => {
                                         handleSelectService();
                                     }}
                                     isChecked={hairoption.current}
-                                />
-                                <Text>Hair cutting</Text>
+                                /> */}
                             </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <CheckBox
-                                    style={{ padding: 10 }}
-                                    onClick={() => {
-                                        beardoption.current = (!beardoption.current);
-                                        handleSelectOptions();
-                                        handleSelectService();
-                                    }}
-                                    isChecked={beardoption.current}
-                                />
-                                <Text>Beard Triming</Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+                                <TouchableHighlight
+                                    style={[
+                                    tw`p-4 w-20 items-center my-2 rounded-full`,
+                                    {backgroundColor:beardoption.current ? '#E07C24' : '#dfe6e9'},
+                                    ]}
+                                    onPress={() => {beardoption.current = (!beardoption.current),handleSelectOptions();
+                                        handleSelectService();}}
+                                    underlayColor={beardoption.current ? '#E07C24' : '#E5E7EB'}>
+                                    <Text style={tw`text-black font-semibold`}>
+                                    Beard
+                                    </Text>
+                                </TouchableHighlight>
                             </View>
                         </View>
                     </View>
                     }
                     <View>
                         {(bookingDone && getMinuteDifference(currentTime,myBookingTime.current) > 0) ?
-                        <Text style={[styles.subheading, { margin:20 }]}> Your waiting time:{getMinuteDifference(currentTime,myBookingTime.current)} mins</Text>
+                        <Text style={[styles.subheading, { margin:20 }]}> Waiting time:{getMinuteDifference(currentTime,myBookingTime.current)} mins</Text>
                         : (bookingDone && getMinuteDifference(currentTime,myBookingTime.current) <= 0 && getMinuteDifference(currentTime,myCompletionTime.current) > 0) ?
                         <Text style={[styles.subheading, { margin:20 }]}> ITS YOUR TURN!!</Text>
                         : (bookingDone && getMinuteDifference(currentTime,myCompletionTime.current) <= 0) &&
@@ -371,10 +441,18 @@ const ShopDetails = ({ navigation, route }) => {
                         <CurrentLobbyDetail />
                     :
                     <View style={{alignItems:'center'}}>
-                        <Text style={styles.subheading}>Pay your booking amount: Rs.{serviceCost.current}</Text>
-                        <TouchableOpacity style={styles.paybtn} onPress={()=>handleCompleteBooking()}>
-                            <Text style={styles.btntxt}>Click Here To Pay</Text>
-                        </TouchableOpacity>
+                        <Text style={[styles.subheading, tw`mt-4 text-black`]}>Your booking amount: Rs.{serviceCost.current}</Text>
+                        <TouchableHighlight
+                            style={[
+                            tw`p-4 w-52 items-center my-8 rounded-full`,
+                            {backgroundColor: '#ddffab'},
+                            ]}
+                            onPress={() => completePayment()}
+                            underlayColor={isPressed ? 'transparent' : '#E5E7EB'}>
+                            <Text style={tw`text-black font-semibold`}>
+                            Continue
+                            </Text>
+                        </TouchableHighlight>
                     </View>
                     }
                 </View>
@@ -389,6 +467,17 @@ const ShopDetails = ({ navigation, route }) => {
 export default ShopDetails
 
 const styles = StyleSheet.create({
+    mapcontainer: {
+        height: 150,
+        width: 300,
+        flex:1,
+        // alignItems: 'center',
+      },
+      map: {
+
+        height: '100%',
+        width: '100%',
+      },
     container: {
         flex:1,
         // margin:'auto',
@@ -431,25 +520,14 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'flex-start',
-        width: '95%',
+        width: windowWidth-20,
         flexWrap: 'wrap',
         marginBottom: 20,
         borderWidth: 1,
         borderRadius: 20,
-        borderColor: 'grey'
+        borderColor: 'lightgray',
 
     },
-    // occupied: {
-    //     width: 50,
-    //     height: 70,
-    //     borderRadius: 10,
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     backgroundColor: '#E21717',
-    //     margin: 12,
-    //     marginTop:5,
-    //     marginBottom:5
-    // },
 
     addbtn: {
         width: 50,
@@ -458,14 +536,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#38CC77',
-        margin: 12,
+        margin: 13,
         marginTop:5,
         marginBottom:5
     },
     services: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'center',
+        // backgroundColor:'#dfe6e9'
     },
     paybtn: {
         backgroundColor: '#000000',
@@ -485,7 +564,8 @@ const styles = StyleSheet.create({
         margin: 14,
         borderWidth: 2,
         borderRadius: 10,
-        borderColor: 'lightgrey'
+        borderColor: 'lightgray',
+        width:'95%'
     },
     lastImage: {
         height: 150,
@@ -493,6 +573,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
         maxWidth: '95%',
+        // width:'100%'
     },
     cardHeading: {
         fontSize: 25,
@@ -504,7 +585,12 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginRight: 10,
         color: '#000000'
-
+    },
+    timeDate:{
+        fontSize: 15,
+        marginBottom: 10,
+        marginRight: 10,
+        color: '#000000'
     },
     rebookbtn: {
         backgroundColor: '#dfe6e9',

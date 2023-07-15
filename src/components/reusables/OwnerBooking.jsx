@@ -2,8 +2,10 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 
 import { calculateTime } from './timeCalculation';
+import tw from 'tailwind-react-native-classnames';
 
 const OwnerBooking = ({item,index}) => {
+  
   return (
     <>
     <TouchableOpacity>
@@ -15,7 +17,8 @@ const OwnerBooking = ({item,index}) => {
             alignItem: 'center',
             borderRadius: 10,
           }}>
-          <Image source={require('../../assets/logo.png')} />
+          <Image style={tw`h-12 w-12`} source={require('../../assets/person.png')}/>
+
         </View>
         <View style={styles.preItems}>
           <Text style={{marginBottom: 2, fontSize: 20, color: '#000000'}}>

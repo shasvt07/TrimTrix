@@ -1,5 +1,10 @@
-const shopReducer = (state = {shop:null}, action) => {
+const shopReducer = (state = {shop:null, isLoading:true}, action) => {
     switch(action.type){
+        case 'START_LOADING':
+            return { ...state, isLoading: true };
+        case 'END_LOADING':
+            return { ...state, isLoading: false };
+
         case "STORE_DETAILS":
             return {...state, shop:action.payload};
         
@@ -20,7 +25,7 @@ const shopReducer = (state = {shop:null}, action) => {
                 }
                 return seat;
             })
-        return {...state , shop:{...state.shop, lobby:newlobby}}
+        return {...state , shop:{...state.shop, lobby:newlobby}, isLoading:true}
 
         case "SEAT_BOOKED":
             const seatInfo1 = action.payload;

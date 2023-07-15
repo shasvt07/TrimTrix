@@ -1,10 +1,12 @@
 import * as api from '../../api/index.js'
 
-export const fetchStores = async() =>{
+export const fetchStores = () => async(dispatch) =>{
     try{
+    dispatch({type:"START_LOADING"});
     const {data} = await api.fetchStores().then(res => {return res});
-    // console.log(data);
-    return data;
+    dispatch({type:"FETCH_SHOPS", payload:data});
+    dispatch({type:"END_LOADING"});
+
     }catch(err){
         console.log(err);
     }

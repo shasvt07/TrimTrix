@@ -18,7 +18,7 @@ const MainNav = () => {
   
   return (
     <NavigationContainer>
-      {currentUser !== null ? (currentUser.isOwner ? <OwnerNavigation/> : <TabNavigation />): <AuthStack/>}
+      {currentUser !== null ? (currentUser?.isOwner ? <OwnerNavigation/> : <TabNavigation />): <AuthStack/>}
     </NavigationContainer>
   )
 }

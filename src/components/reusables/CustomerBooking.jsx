@@ -1,9 +1,18 @@
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 
 import { calculateTime } from './timeCalculation';
+import tw from 'tailwind-react-native-classnames';
+import { fetchShop } from '../../actions/customers/stores';
+import { useDispatch } from 'react-redux';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const CustomerBooking = ({item,index}) => {
+const CustomerBooking = ({item,index,navigation}) => {
+  const dispatch = useDispatch();
+
+  const getShopDetails = async (shopId) => {
+    await dispatch(fetchShop(shopId));
+  }
   return (
     <>
     {index == 0 ?
@@ -18,7 +27,10 @@ const CustomerBooking = ({item,index}) => {
           </View>
           <Text style={styles.cost}>{item.services}</Text>
           <Text style={styles.cost}>Rs.{item.cost}</Text>
-          <TouchableOpacity style={styles.rebookbtn}>
+          <TouchableOpacity style={styles.rebookbtn} onPress = {()=> {
+              getShopDetails(item.shopId);
+              navigation.push('shopDetails', (params = {room: item.shopId}));}}>
+                <FontAwesome name="repeat" size={15} color="#000000" />
               <Text style={{fontSize:15}}>Rebook</Text>
           </TouchableOpacity>
       </View>
@@ -33,7 +45,8 @@ const CustomerBooking = ({item,index}) => {
             alignItem: 'center',
             borderRadius: 10,
           }}>
-          <Image source={require('../../assets/logo.png')} />
+          <Image style={tw`h-12 w-12`} source={require('../../assets/person.png')}/>
+
         </View>
         <View style={styles.preItems}>
           <Text style={{marginBottom: 2, fontSize: 20, color: '#000000'}}>
@@ -45,8 +58,11 @@ const CustomerBooking = ({item,index}) => {
           </View>
           <Text style={styles.cost}>Rs.{item.cost}</Text>
         </View>
-        <TouchableOpacity style={styles.rebookbtn}>
-          <Text style={{fontSize: 15}}>Rebook</Text>
+        <TouchableOpacity style={styles.rebookbtn} onPress = {()=> {
+              getShopDetails(item.shopId);
+              navigation.push('shopDetails', (params = {room: item.shopId}));}}>
+              <FontAwesome name="repeat" size={15} color="#000000" />
+            <Text style={{fontSize: 15}}>Rebook</Text>
         </TouchableOpacity>
       </View>
       <View
@@ -90,7 +106,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   last: {
-    height: 350,
+    height: 360,
     margin: 14,
     borderWidth: 2,
     borderRadius: 10,
@@ -121,12 +137,13 @@ const styles = StyleSheet.create({
     flex: 2,
   },
   rebookbtn: {
+    flexDirection: 'row',
     backgroundColor: '#dfe6e9',
     height: 40,
     borderRadius: 50,
     width: 100,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
   },
 
   timeDate: {

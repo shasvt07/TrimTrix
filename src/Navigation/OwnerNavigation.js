@@ -16,6 +16,8 @@ import MyStore from '../components/screens/ShopOwner/MyStore'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import ShopUpdate from '../components/screens/ShopOwner/ShopUpdate'
 import OwnerActivity from '../components/screens/ShopOwner/OwnerActivity'
+import Map from '../components/reusables/MapView'
+import SetMapLocation from '../components/reusables/SetMapLocation'
 
 
 
@@ -29,6 +31,8 @@ const MyStoreNavigation = () => {
         >
             <Stack.Screen name="myStore" component={MyStore}/>
             <Stack.Screen name="updateStore" component={ShopUpdate} />
+            <Stack.Screen name="registerStore" component={ShopRegister} />
+            <Stack.Screen name="map" component={SetMapLocation} />
         </Stack.Navigator>
     )
 }
