@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   RefreshControl,
   ScrollView,
@@ -23,7 +24,7 @@ import { windowWidth } from '../../../utils/Dimension';
 
 
 const MyStore = ({navigation}) => {
-  const {currentUser,socket} = useContext(AuthContext);
+  const {currentUser,socket,isLoading} = useContext(AuthContext);
   const {myShop} = useSelector(state => state.myShop);
   const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(true);
@@ -70,14 +71,18 @@ const MyStore = ({navigation}) => {
 
   const hanldeCloseShop = async() => {
     isOpen.current = false;
-    socket.emit('store:Status', {storeId:myShop._id,status:isOpen.current});
+    socket.emit('store:Status', {storeId:myShop._id,status:{...shop, isOpen:false}});
     dispatch(openClose(myShop._id,isOpen.current));
   }
   
   const hanldeOpenShop = async() => {
     isOpen.current = true;
-    socket.emit('store:Status', {storeId:myShop._id,status:isOpen.current});
+    socket.emit('store:Status', {storeId:myShop._id,status:{...shop, isOpen:true}});
     dispatch(openClose(myShop._id,isOpen.current));
+  }
+
+  if(isLoading){
+    return <View style={{alignItems:'center',justifyContent:'center'}}><ActivityIndicator size="large" color="#0000ff" /></View>
   }
 
   return (
@@ -115,7 +120,7 @@ const MyStore = ({navigation}) => {
             <TouchableOpacity style={styles.last}>
               <Image
                 style={styles.lastImage}
-                source={require('../../../assets/last.png')}
+                source={ shop.location.image=='' ? require('../../../assets/last.png') : {uri:shop.location.image}}
               />
               <View style={{marginLeft: 20}}>
                 <Text style={styles.cardHeading}>{shop?.name}</Text>
@@ -285,6 +290,7 @@ const styles = StyleSheet.create({
   },
   last: {
     height: 340,
+    width:'95%',
     margin: 14,
     borderWidth: 2,
     borderRadius: 10,
@@ -292,10 +298,11 @@ const styles = StyleSheet.create({
   },
   lastImage: {
     height: 150,
-    margin: 10,
+    // margin: 10,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    maxWidth: '95%',
+    // maxWidth: '95%',
+    width: '100%',
   },
   cardHeading: {
     fontSize: 25,

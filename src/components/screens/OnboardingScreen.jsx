@@ -34,6 +34,7 @@ const OnboardingScreen = ({navigation}) => {
     <>
     {isLoading ?
     <View
+    style={{width:'100%'}}
       flex={1}
       backgroundColor='white'
       alignItems='center'
@@ -42,7 +43,6 @@ const OnboardingScreen = ({navigation}) => {
       <ActivityIndicator size="large" />
     </View>
   : 
-  
     <View style={tw`flex-1 bg-white`}>
       <StatusBar style={[ {backgroundColor:'#03203C'}]}/>
       <View style={[tw` h-2/5 overflow-hidden`, {borderBottomEndRadius:150,borderBottomStartRadius:150,backgroundColor:'#03203C'}]}>
@@ -85,6 +85,9 @@ const OnboardingScreen = ({navigation}) => {
       </View>
 
     </View>
+  
+
+    // <View></View>
   }
     </>
   );

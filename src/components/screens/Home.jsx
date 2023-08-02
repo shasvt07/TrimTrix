@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -21,6 +22,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import StoreList from '../reusables/StoreLists';
 import MapView from 'react-native-maps';
 import Map from '../reusables/MapView';
+import tw from 'tailwind-react-native-classnames';
 
 
 
@@ -50,8 +52,10 @@ const Home = ({navigation}) => {
   };
 
   return (
-    // <ScrollView style={{backgroundColor:'#FFFFFF'}}>
+    <ScrollView style={{backgroundColor:'#FFFFFF'}}>
+
     <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
+      <RefreshControl refreshing={refreshing} onRefresh={fetch} />
       <TouchableOpacity style={styles.searchcontainer} onPress={() => navigation.navigate('search')}>
         <Icon name="search" size={20} />
         <Text style={styles.searchtxtinput}>Shop Name?</Text>
@@ -69,18 +73,20 @@ const Home = ({navigation}) => {
         justifyContent='center'
       >
         <ActivityIndicator size="small" />
+
       </View> :
+      
         <FlatList
           data={shopList?.slice(0,2)}
           keyExtractor={item => item._id}
-          renderItem={({item,index}) => <StoreList navigation={navigation} item={item} index={index}/>}
+          renderItem={({item,index}) => <StoreList isLoading={isLoading} navigation={navigation} item={item} index={index}/>}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={fetch} />
           }
         />
-    }
+      } 
       </View>
-      <View>
+      {/* <View>
         <Text style={styles.subHeading}>Suggestions</Text>
         <View style={styles.items}>
           <TouchableOpacity
@@ -103,40 +109,62 @@ const Home = ({navigation}) => {
             <Text style={styles.icontxt}>Trips</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
       <View>
-        <Text style={styles.subHeading}>Ways to save money</Text>
-        {/* <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 20,
-          }}>
-          <Carousel
-              // ref={c => {
-              //   this._carousel = c;
-              // }}
-              data={sliderData}
-              renderItem={renderBanner}
-              sliderWidth={windowWidth-20}
-              itemWidth={300}
-              loop={true}
-              
-            />
-        </View> */}
-        {/* <MapView
-          style={{height:'100%', width:'100%'}}
-          initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        /> */}
-        {/* <Map/> */}
+        <Text style={styles.subHeading}>What we Offer</Text>
+        <ScrollView showsHorizontalScrollIndicator={false}  horizontal={true}  style={{overflow:'scroll', marginTop:10}}>
+          <View style={[tw`w-64 m-2 ml-4 h-52 rounded-lg bg-white`,]}>
+            <Image style={[tw`h-32 w-64 rounded-xl`,]} source={require('../../assets/homescreen/image1.jpeg')} />
+            <View style={[tw`h-32 mt-4`]}>
+              <Text style={tw`text-black font-bold text-xl`}> Book you seat! </Text>
+              <Text style={tw`text-black text-sm`}> Now salons are online </Text>
+            </View>
+          </View>
+          <View style={[tw`w-64 m-2 h-52 rounded-lg bg-white`]}>
+            <Image style={[tw`h-32 w-64 rounded-xl`,]} source={require('../../assets/homescreen/image2.jpeg')} />
+            <View style={[tw`h-32 mt-4`]}>
+              <Text style={tw`text-black font-bold text-xl`}>Dont Waste Your time!</Text>
+              <Text style={tw`text-black text-sm`}>No need to wait at store for your turn</Text>
+            </View>
+          </View>
+          <View style={[tw`w-64 m-2 h-52 rounded-lg bg-white`]}>
+            <Image style={[tw`h-32 w-64 rounded-xl`,]} source={require('../../assets/homescreen/image4.jpeg')} />
+            <View style={[tw`h-32 mt-4`]}>
+              <Text style={tw`text-black font-bold text-xl`}>Shop is Open or Close!</Text>
+              <Text style={tw`text-black text-sm`}>We provide live status of shops</Text>
+            </View>
+          </View>
+        </ScrollView>
+      </View>
+
+      <View>
+        <Text style={styles.subHeading}>Ways to use Our app</Text>
+        <ScrollView showsHorizontalScrollIndicator={false}  horizontal={true}  style={{overflow:'scroll', marginTop:10}}>
+          <View style={[tw`w-64 m-2 h-52 bg-white`]}>
+            <Image style={[tw`h-32 w-64 rounded-xl`,]} source={require('../../assets/homescreen/image6.jpeg')} />
+            <View style={[tw`h-32 mt-4 ml-2`]}>
+              <Text style={tw`text-black font-bold text-xl`}>Pay booking Amount</Text>
+              <Text style={tw`text-black text-sm`}>30% of your total service charge</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={[tw`w-64 m-2 ml-4 h-52 bg-white rounded-lg`]} onPress={() => navigation.navigate('map', params={shopList:shopList})}>
+            <Image style={[tw`h-32 w-64 rounded-xl`,]} source={require('../../assets/homescreen/image5.png')} />
+            <View style={[tw`h-32 mt-4 ml-2`]} >
+              <Text style={tw`text-black font-bold text-xl`}>Nearby Salon</Text>
+              <Text style={tw`text-black text-sm`}>See Salons near you in one Click</Text>
+            </View>
+          </TouchableOpacity>
+          <View style={[tw`w-64 m-2 h-52 bg-white`]}>
+            <Image style={[tw`h-32 w-64 rounded-xl`,]} source={require('../../assets/homescreen/image3.jpeg')} />
+            <View style={[tw`h-32 mt-4`]}>
+              <Text style={tw`text-black font-bold text-xl`}>Check Lobby Deatils</Text>
+              <Text style={tw`text-black text-sm`}>Get full details of your queue</Text>
+            </View>
+          </View>
+        </ScrollView>
       </View>
     </View>
-    // </ScrollView>
+    </ScrollView> 
   );
 };
 

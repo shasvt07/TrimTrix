@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 
 export const AuthContext = createContext();
 
-const socket = io.connect('http://192.168.1.35:8000');
+const socket = io.connect('https://trimtrixbackend.onrender.com');
 
 export const AuthProvider = ({children}) => {
     const[isOwner, setIsOwner] = useState(false);
@@ -18,8 +18,11 @@ export const AuthProvider = ({children}) => {
         await AsyncStorage.setItem('isOwner' , JSON.stringify(true));
     }
     const setIsOwnerFalse = async () => {
+        setIsLoading(true);
         setIsOwner(false);
         await AsyncStorage.setItem('isOwner' , JSON.stringify(false));
+        setIsLoading(false);
+
     }
     const login = async(user) => {
         try{
@@ -51,13 +54,13 @@ export const AuthProvider = ({children}) => {
             setIsLoading(true);
             var user = await AsyncStorage.getItem('user').then(JSON.parse);
             // await AsyncStorage.removeItem('user');
-
             setCurrentUser(user);
-            setIsLoading(false);
 
             var value = await AsyncStorage.getItem('isOwner').then(JSON.parse);
             setIsOwner(value);
-        // AsyncStorage.setItem('bookedSeat' , JSON.stringify(false));
+            setIsLoading(false);
+
+                // AsyncStorage.setItem('bookedSeat' , JSON.stringify(false));
 
         }
         catch(err){

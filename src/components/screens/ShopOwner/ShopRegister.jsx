@@ -32,7 +32,7 @@ const ShopRegister = ({navigation}) => {
   const initialStates = {
     name: '',
     phoneNumber: '',
-    location: {longitude: 0, latitude: 0, address: ''},
+    location: {longitude: 0, latitude: 0, address: '',image:''},
     ownerName: '',
     ownerId: currentUser?._id,
     hair: {cost: 0, time: 0},
@@ -116,7 +116,7 @@ const ShopRegister = ({navigation}) => {
               ]}>
               <TextInput
                 placeholder="Enter landmark,city,state etc"
-                style={tw`ml-4`}
+                style={[tw`ml-4`, {width: 225}]}
                 onChangeText={e =>
                   address.current = e
                 }

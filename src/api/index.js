@@ -1,6 +1,13 @@
 import axios from 'axios';
 
-export const API = axios.create({baseURL:"http://192.168.1.35:8000/api"});
+export const API = axios.create({
+    baseURL:"https://trimtrixbackend.onrender.com/api",
+    timeout:1000,
+    header:{
+        'getAccept': 'Basic Y2xpZW50OnNlY3JldA==',
+        'Content-Type': 'apllication/x-www-form-urlencoded'
+    }
+});
 
 
 export const customerRegister = (userData) => API.post("/customer/auth/register",userData);

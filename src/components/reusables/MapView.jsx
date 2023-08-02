@@ -24,10 +24,10 @@ const Map = ({navigation}) => {
     useEffect(() => {
         getLoaction();
         requestLocationPermission();
-        socket.on('store:StatusDetail', (storeId,status) => {
-          dispatch({type:"SHOP_STATUS", payload:{shopId:storeId,openClose:status}});
+        socket.on('store:StatusDetail', (storeId,shopData) => {
+            dispatch({ type: "OPEN_CLOSE", payload:shopData.isOpen});
+            dispatch({type:"SHOP_STATUS", payload:shopData});
         })
-      
     },[socket])
 
   const requestLocationPermission = async () => {
@@ -86,10 +86,10 @@ const Map = ({navigation}) => {
         >
         {shopList.map((item,index) => (
           <Marker key={item._id}
-            pinColor={item.isOpen ?  'green' : 'red'}
+            pinColor={item?.isOpen ?  'green' : 'red'}
             coordinate={{latitude:Number(item.location.latitude), longitude:Number(item.location.longitude)}}
             onPress={() => this[RBSheet + index].open()}
-            title={item.isOpen ? 'Open' : 'Closed'}
+            title={item?.isOpen ? 'Open' : 'Closed'}
           >
           <Callout>
             <RBSheet

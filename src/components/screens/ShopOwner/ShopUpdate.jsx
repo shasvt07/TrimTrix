@@ -119,7 +119,7 @@ const ShopUpdate = ({navigation}) => {
               ]}>
               <TextInput
                 placeholder="Enter landmark,city,state etc"
-                style={tw`ml-4`}
+                style={[tw`ml-4`, {width: 225}]}
                 value={shopData.current.location.address}
                 onChangeText={e =>
                   (shopData.current = {

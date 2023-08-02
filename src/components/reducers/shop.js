@@ -14,7 +14,7 @@ const shopReducer = (state = {shop:null, isLoading:true}, action) => {
             const newlobby = state.shop.lobby.map(seat =>{
                 if(seat._id == seatInfo.seatId){
                     return {...seat, 
-                        personId:seatInfo.customerId,
+                        personId:seatInfo.personId,
                         bookedServices : seatInfo.services,
                         status : seatInfo.status,
                         bookingTime : null,

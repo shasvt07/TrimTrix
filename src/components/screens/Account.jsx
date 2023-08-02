@@ -12,7 +12,6 @@ import { useDispatch } from 'react-redux'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Account = () => {
-
     const {logout,currentUser} = useContext(AuthContext);
 
   return (
@@ -41,7 +40,7 @@ const Account = () => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.itemBtn}>
                     <Icon size={20} style={styles.icon} color={'#000000'} name="clock"/>
-                    <Text style={styles.icontxt}>Trips</Text>
+                    <Text style={styles.icontxt}>Activity</Text>
                 </TouchableOpacity>
             </View>
         </View>

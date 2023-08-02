@@ -58,10 +58,15 @@ const TabNavigation = () => {
         tabBarShowLabel:false,
         tabBarInactiveTintColor:'grey',
         tabBarActiveTintColor: '#000000',
+        tabBarStyle:{height:60},
     }}>
-        <Tab.Screen name = 'Home' component={HomeNavigation} options={{
+        <Tab.Screen  name = 'Home' component={HomeNavigation} options={{
+            
             tabBarIcon:({color, size}) => (
+                <View style={{alignItems:'center'}}>
                 <Icon name='home' color={color} size={size}/>
+                <Text>Home</Text>
+                </View>
             )}
         }/>
         {/* <Tab.Screen name = 'Services' component={ShopRegister} options={{
@@ -72,12 +77,18 @@ const TabNavigation = () => {
         
         <Tab.Screen name = 'Activity' component={ActivityNavigation} options={{
             tabBarIcon:({color, size}) => (
-                <Feather name='activity' color={color} size={size}/>
+                <View style={{alignItems:'center'}}>
+                <Icon color={color} size={size} name="clock"/>
+                <Text>Activity</Text>
+                </View>
             )}
         }/>
         <Tab.Screen name = 'Account' component={Account} options={{
             tabBarIcon:({color, size}) => (
-                <MaterialCommunityIcons name='account' color={color} size={size}/>
+                <View style={{alignItems:'center'}}>
+                    <MaterialCommunityIcons name='account' color={color} size={size}/>
+                    <Text>Account</Text>
+                </View>
             )}
         }/>
         

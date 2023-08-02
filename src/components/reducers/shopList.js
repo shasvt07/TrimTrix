@@ -9,16 +9,8 @@ const shopListReducer = (state = { shopList:[] ,isLoading:true}, action) => {
             return { ...state, shopList: action.payload};
 
         case "SHOP_STATUS":
-            const newshopList = state.shopList.map((shop) =>{
-                if(shop._id === action.payload.shopId){
-                    return {...shop, isOpen: action.payload.openClose}
-                }
-                return shop;
-            })
-            // console.log("reducers",newshopList);
-            return {...state, newshopList};
+            return {...state, shopList:state.shopList.map((shop) => shop._id === action.payload._id ? action.payload : shop)}
             
-
         default:
             return state;
     }

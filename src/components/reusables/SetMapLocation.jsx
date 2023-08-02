@@ -90,18 +90,19 @@ const SetMapLocation = ({shopData,setMapOpen}) => {
     )
   }
 
-  // const getAddress = async (lat, lng) => {
-  //   // console.log(lat, lng);
-  //   Geocoder.fallbackToGoogle("AIzaSyCmEcJsr0MuiVyHhC9Jr5wVPPwOGMQl7aE");
-  //   try{
-  //     let ret = await Geocoder.geocodePosition({lat, lng})
-  //     const address = (ret[0].formattedAddress);
-  //     setCurrentAddress(address);
-  //     console.log(address);
-  //   }catch(error){
-  //     console.log(error);
-  //   }
-  // }
+//   const getAddress = async (lat, lng) => {
+//     // console.log(lat, lng);
+//     try{
+//       await Geocoder.from(lat,lng).then(data => {
+//         var addressComponent = data.results[0].address_components[0];
+//         console.log(addressComponent);
+//         setCurrentAddress(addressComponent)
+// })
+// .catch(error => console.warn(error));
+//     }catch(error){
+//       console.log(error);
+//     }
+//   }
 
   const onChangeValue = (region) => {
     setRegion(region);
@@ -109,42 +110,61 @@ const SetMapLocation = ({shopData,setMapOpen}) => {
   }
 
   const handleSaveLocation = () => {
-    shopData.current = {...shopData.current, location:{...shopData.current.locaiton, latitude:region.latitude.toString(), longitude:region.longitude.toString()}}
+    shopData.current = {...shopData.current, location:{...shopData.current.location, latitude:region.latitude.toString(), longitude:region.longitude.toString()}}
     setMapOpen(false);
   }
+
+  const mapViewRef = useRef(null);
+
+  const handleTakeSnapshot = async () => {
+    if (mapViewRef.current) {
+      try {
+        const uri = await mapViewRef.current.capture();
+        setSnapshotUri(uri);
+        shopData.current = {...shopData.current, location:{...shopData.current.location,image:uri}}
+        console.log(uri);
+      } catch (error) {
+        console.error('Error capturing snapshot:', error);
+      }
+    }
+    else{
+      console.log('Taking snapshot')
+
+    }
+  };
 
 
 
   return (
     <View style={styles.container}>
-      <ViewShot ref={mapViewRef} style={{ height:'100%', width:'100%', flex:1}}>
+      <ViewShot ref={mapViewRef} style={{width:'100%', height:'100%', flex:1}}>
       <MapView
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
-        showsUserLocation={true}
+        // showsUserLocation={true}
         showsMyLocationButton={true}
         initialRegion={region}
         onRegionChangeComplete={onChangeValue}
         ref={ref => map = ref}
         >
           <Marker coordinate={{latitude:region.latitude, longitude:region.longitude}}>
-        <Image style={{height:30, width:30, backgroundColor:'transparent'}} source={require('../../assets/marker.png')} />
-
+            <Image style={{height:20,width:20, backgroundColor:'transparent'}} source={require('../../assets/locpin.png')} />
           </Marker>
         </MapView>
+        </ViewShot>
+
           
         <Marker 
         style={{top:'50%', left:'50%', marginLeft:-15, marginTop:-28, position:'absolute'}}
         >
         <Image style={{height:30, width:30, backgroundColor:'transparent'}} source={require('../../assets/marker.png')} />
         </Marker>
-        </ViewShot>
         <TouchableHighlight
             style={[
             tw`p-4 items-center rounded-full absolute bottom-10`,
             {backgroundColor: '#000'},
             ]}
-            onPress={() => {handleSaveLocation()}}
+            onPress={async() => { await handleTakeSnapshot(), handleSaveLocation()}}
             underlayColor={false? 'transparent' : '#E5E7EB'}>
             <Text style={tw`text-white font-semibold`}>
             Continue

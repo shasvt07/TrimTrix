@@ -60,7 +60,7 @@ const ShopDetails = ({ navigation, route }) => {
         shopId: room,
         cost:0, 
         personId: currentUser._id, 
-        services: "", 
+        services: null, 
         status:"free",
         bookingTime:null,
         personName:"",
@@ -74,7 +74,7 @@ const ShopDetails = ({ navigation, route }) => {
         customerName:"",
         customerId:"",
         location:"",
-        services:'',
+        services:null,
         bookingTime:null,
         completionTime:null,
         cost:0
@@ -129,11 +129,11 @@ const ShopDetails = ({ navigation, route }) => {
             dispatch({ type: "EMPTY_SEAT", payload: seatId });
             dispatch({type:"JOB_DONE", payload:seatId})
         })
-        socket.on('store:StatusDetail', (storeId,status) => {
+        socket.on('store:StatusDetail', (storeId,shopData) => {
             if(room === storeId){
-                dispatch({ type: "OPEN_CLOSE", payload:status});
-                // dispatch({type:"SHOP_STATUS", payload:{shopId:storeId,openClose:openCloseinfo}});
+                dispatch({ type: "OPEN_CLOSE", payload:shopData.isOpen});
             }
+            dispatch({type:"SHOP_STATUS", payload:shopData});
         })
         socket.on('store:UpdatedDetails', (storeInfo) => {
             dispatch({type:"STORE_DETAILS", payload:storeInfo});
@@ -217,8 +217,8 @@ const ShopDetails = ({ navigation, route }) => {
     }
 
     const completePayment = async() => {
-        if(selectedService.current===null){
-            Alert.alert("Please select atleast one service");
+        if(selectedService.current===null || bookingData.current.seatId===null){
+            Alert.alert("Please select atleast one service and seat to book");
             return;
         }
         var options = {
@@ -312,16 +312,21 @@ const ShopDetails = ({ navigation, route }) => {
                 <Text style={styles.heading}> Shop Details</Text>
                 <View style={styles.partition}></View>
                 <View style={styles.last}>
-                    <Pressable onPress={()=>{navigation.navigate('getDirection', params={shop})}}>
-                        <Image style={styles.lastImage} source={require('../../assets/last.png')} />
+                    <Pressable
+                        style={{width:'100%',height:150, marginBottom:10}}
+                         onPress={()=>{navigation.navigate('getDirection', params={shop})}}>
+                        <Image 
+                        style={styles.lastImage} 
+                        source={require('../../assets/last.png')}
+                        />
 
                     </Pressable>
                     <View style={{ marginLeft: 20, justifyContent: 'space-between' }}>
                         <Text style={styles.cardHeading}>{shop?.name}</Text>
                         <View style={{flexDirection: 'row',justifyContent:'space-between'}}>
                   <View style={{flex: 2}}>
-                    <Text style={styles.timeDate}>Costs of services: </Text>
-                    <View style={{marginTop: 10}}>
+                    <Text style={[styles.timeDate]}>Costs of services: </Text>
+                    <View >
                       <Text style={styles.cost}>
                         Hair Cutting: Rs.{Number(shop?.hair?.cost)}
                       </Text>
@@ -352,7 +357,7 @@ const ShopDetails = ({ navigation, route }) => {
                 </View>
                     </View>
                 </View>
-                {shop?.isOpen &&
+                {shop?.isOpen && 
                 <View style={{alignItems:'center'}}>
                     <Text style={styles.heading}> Select available seat </Text>
                     <View style={styles.lobby}>
@@ -376,7 +381,7 @@ const ShopDetails = ({ navigation, route }) => {
                             <TouchableOpacity key={seat?._id} style={[styles.addbtn, (seat?.status === 'processing' ? {backgroundColor:'#E8BD0D'} : (seat?.status === 'booked' && (seat?.personId === currentUser._id ? {backgroundColor:'#23C4ED'} : {backgroundColor:'#E21717'})))]}
                                 onPress={() => {seat?.status == "free" && handlebookSeat(seat?._id)}}
                             >
-                            {(seat?.status === 'processing' || (seat?.status === 'booked') && seat.personId === currentUser._id) &&
+                            {(seat?.status === 'processing' || seat?.status === 'booked') && seat.personId === currentUser._id &&
                             <Entypo onPress={()=> createAlert(seat._id)} name='circle-with-minus' size={24} color={'#0D0D0D'} />
                             }
                             </TouchableOpacity>
@@ -561,18 +566,19 @@ const styles = StyleSheet.create({
     },
     last: {
         height: 340,
+        width:'95%',
         margin: 14,
         borderWidth: 2,
         borderRadius: 10,
         borderColor: 'lightgray',
-        width:'95%'
     },
     lastImage: {
         height: 150,
-        margin: 10,
+        width: '100%',
+        // margin: 10,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
-        maxWidth: '95%',
+        // maxWidth: '95%',
         // width:'100%'
     },
     cardHeading: {
